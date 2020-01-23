@@ -1,18 +1,26 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 class SignUpForm extends Component {
     constructor() {
         super();
 
+        let token = localStorage.getItem("jwtToken");
+        let loginStatus = true;
+
+        if(token == null){
+          loginStatus = false
+        }
+      
         this.state = {
             email: '',
             password: '',
             name: '',
-            hasAgreed: false
+            hasAgreed: false,
+            loginStatus
         };
-
+      
         this.handleChange = this.handleChange.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
         
@@ -38,7 +46,7 @@ class SignUpForm extends Component {
           password2: this.state.password
         };
 
-        const appURL = "http://192.168.1.40:5000";
+        const appURL = "http://192.168.0.104:5000";
         
         axios
         .post(appURL+"/api/users/register", newUser)
@@ -52,6 +60,12 @@ class SignUpForm extends Component {
     }
 
     render() {
+
+        if(this.state.loginStatus){
+          return (
+            <Redirect to="/dashboard" />
+          ) 
+        }
         return (
         <div className="FormCenter">
             <form onSubmit={this.handleSubmit} className="FormFields">

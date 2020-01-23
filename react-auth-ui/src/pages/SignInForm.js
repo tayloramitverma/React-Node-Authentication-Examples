@@ -1,14 +1,22 @@
 import React, { Component } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Redirect } from 'react-router-dom';
 import axios from 'axios';
 
 class SignInForm extends Component {
     constructor() {
         super();
 
+        let tokenis = localStorage.getItem("jwtToken");
+        let loginIn = true;
+        
+        if(tokenis == null) {
+          loginIn = false;
+        }
+
         this.state = {
             email: '',
-            password: ''
+            password: '',
+            loginIn
         };
 
         this.handleChange = this.handleChange.bind(this);
@@ -33,30 +41,31 @@ class SignInForm extends Component {
           password: this.state.password
         };
 
-        const appURL = "http://192.168.1.40:5000";
+        const appURL = "http://192.168.0.104:5000";
         
         axios
         .post(appURL+"/api/users/login", loginUser)
         .then(res => {
           console.log(res);
 
-          // Set token to localStorage
           const { token } = res.data;
           localStorage.setItem("jwtToken", token);
-
+          
+          this.setState({loginIn: true });
         })
         .catch(err =>
           console.log(err)
-        );
-
-        console.log('The form was submitted with the following data:');
-        
+        );        
     }
 
     render() {
+
+        if(this.state.loginIn) {
+          return <Redirect to="/dashboard" />
+        }
         return (
           <div className="FormCenter">
-            <form onSubmit={this.handleSubmit} className="FormFields" onSubmit={this.handleSubmit}>
+            <form onSubmit={this.handleSubmit} className="FormFields">
             <div className="FormField">
                 <label className="FormField__Label" htmlFor="email">E-Mail Address</label>
                 <input type="email" id="email" className="FormField__Input" placeholder="Enter your email" name="email" value={this.state.email} onChange={this.handleChange} />
