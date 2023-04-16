@@ -10,8 +10,8 @@ import './App.css';
 class App extends Component {
 
   constructor() {
+    
     super();
-
     let token = localStorage.getItem("jwtToken");
     let loginStatus = true;
 
@@ -50,6 +50,7 @@ class App extends Component {
                   </div>
                 </div>
               )}
+
               <Switch>
                 <Route exact path="/" component={SignUpForm}></Route>
                 <Route path="/sign-in" component={SignInForm}></Route>
